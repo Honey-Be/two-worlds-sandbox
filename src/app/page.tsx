@@ -1,113 +1,127 @@
+'use client'
+
 import Image from 'next/image'
+import { TwoWorldsBoard, LocationType } from '@/components/two-worlds/board'
+import React, {useState, useEffect} from 'react'
+
+
+import {goForward, goBackward, setPlayerDisplayLocation, syncPlayerLocation} from  '@/redux/features/two-worlds';
+import { useDispatch } from "react-redux";
+import { AppDispatch, useAppSelector } from "@/redux/store";
+import {range} from "lodash"
+
+function delay<T>(value: T, ms: number) {
+  return new Promise<T>(resolve => {
+    setTimeout(() => {resolve(value)}, ms, )
+  })
+}
 
 export default function Home() {
+  /*
+  function goForward() {
+    
+    const new_dummies = {
+      players: dummies.players.map(({email,order,location,cash}) => ({email: email, order: order, location: (location+1)%54, cash: cash})),
+      dummy_properties: Array.from(dummies.dummy_properties)
+    }
+    setDummies(new_dummies)
+  }
+  */
+
+  const dispatch = useDispatch<AppDispatch>();
+  const state = useAppSelector((state) => state.twoWorldsReducer);
+  const [displayLocation0, setDisplayLocation0] = useState<number>(-1);
+  const [displayLocation1, setDisplayLocation1] = useState<number>(-1);
+  const [displayLocation2, setDisplayLocation2] = useState<number>(-1);
+  const [displayLocation3, setDisplayLocation3] = useState<number>(-1);
+
+  
+  const players = state.players
+
+  function GF(order: number) {
+    return delay(order,600).then((value) => dispatch(goForward({order: value})))
+  }
+
+  function GB(order: number) {
+    return delay(order,600).then((value) => dispatch(goBackward({order: value})))
+  }
+
+  function Warp(order: number, dest: number) {
+    
+  }
+
+  
+
+  const move =  (playerEmail: string, dest: number, type: "forward" | "backward" | "warp" = "forward") => {
+    const {order, location} = state.players.filter(({email}) => email === playerEmail)[0];
+    const promises = (() => {
+      const _amount: number = (type === "forward") ? (
+        (dest > location) ? (dest - location) : (54 - (location - dest))
+      ) : (type === "backward") ? (
+        (dest < location) ? (location - dest) : (54 - (dest - location))
+      ) : 1;
+
+      const _promises = range(0,_amount,1).map((item) => {
+        return delay<number>(item, 600)
+      })
+      return _promises
+    })()
+
+    if(type === "forward") {
+      return Promise.all(promises).then((values) => {
+        values.forEach((_) => { dispatch(goForward({order})) })
+      })
+    } else if (type === "backward") {
+      return Promise.all(promises).then((values) => {
+        values.forEach((_) => { dispatch(goBackward({order})) })
+      })
+    } else {
+      return Promise.all(promises).then((values) => {
+        values.forEach((dest) => { dispatch(setPlayerDisplayLocation({order, dest})) })
+      })
+    }
+  }
+
+  function MA(playerEmail: string) {
+    const {location} = state.players.filter(({email}) => email === playerEmail)[0]
+    return move(playerEmail,location + 5,"forward")
+  }
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">src/app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
+    <div>
+      <div>
+        <TwoWorldsBoard
+          width={960} />
+      </div>
+        
+      <div>
+        {Array.from(players).map((player) => {
+          return {
+            element: (
+              <div key={"bgroupId{players.order}"}>
+                <button onClick={async (e) => {
+                  await GF(player.order)
+                  dispatch(syncPlayerLocation())
+                }}>
+                  {"  -- Move Player {players.order} one step --  "}
+                </button>
+                <button onClick={async (e) => {
+                  await MA(player.email)
+                  dispatch(syncPlayerLocation())
+                }}>
+                  {"  -- Move Player {players.order} five steps --  "}
+                </button>
+              </div>
+            ),
+            order: player.order
+          }
+        }).sort((a,b) => a.order - b.order).map(({element}) => element)}
       </div>
 
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px] z-[-1]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
+      <div>
+
       </div>
-
-      <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Explore the Next.js 13 playground.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
+        
+    </div>
   )
 }

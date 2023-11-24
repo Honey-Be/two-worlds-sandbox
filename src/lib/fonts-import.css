@@ -1,0 +1,23 @@
+@font-face {
+    font-family: "KoPubDotumPB-KSCpc-EUC-H";
+    src: url("./fonts/KoPub Dotum_Pro Bold.otf") format('opentype');
+    font-style: bold;
+ }
+
+ @font-face {
+    font-family: "KoPubDotumPM-KSCpc-EUC-H";
+    src: url("./fonts/KoPub Dotum_Pro Medium.otf") format('opentype');
+    font-style: medium;
+ }
+
+ @font-face {
+    font-family: "KoPubBatangPB-KSCpc-EUC-H";
+    src: url("./fonts/KoPub Batang_Pro Bold.otf") format('opentype');
+    font-style: Bold;
+ }
+
+ @font-face {
+    font-family: "KoPubBatangPM-KSCpc-EUC-H";
+    src: url("./fonts/KoPub Batang_Pro Medium.otf") format('opentype');
+    font-style: medium;
+ }

@@ -1,0 +1,134 @@
+[
+    {
+        "type": "start"
+    },
+    {
+        "type": "land",
+        "name": "목포",
+        "groupId": 1
+    },
+    {
+        "type": "lotto"
+    },
+    {
+        "type": "land",
+        "name": "강릉",
+        "groupId": 1
+    },
+    {
+        "type": "water"
+    },
+    {
+        "type": "land",
+        "name": "천안",
+        "groupId": 2
+    },
+    {
+        "type": "land",
+        "name": "전주",
+        "groupId": 2
+    },
+    {
+        "type": "land",
+        "name": "포항",
+        "groupId": 2
+    },
+    {
+        "type": "jail"
+    },
+    {
+        "type": "transportation",
+        "dest": 9
+    },
+    {
+        "type": "land",
+        "name": "춘천",
+        "groupId": 3
+    },
+    {
+        "type": "land",
+        "name": "청주",
+        "groupId": 3
+    },
+    {
+        "type": "chance"
+    },
+    {
+        "type": "land",
+        "name": "성남",
+        "groupId": 4
+    },
+    {
+        "type": "electricity"
+    },
+    {
+        "type": "land",
+        "name": "창원",
+        "groupId": 4
+    },
+    {
+        "type": "university"
+    },
+    {
+        "type": "land",
+        "name": "제주",
+        "groupId": 5
+    },
+    {
+        "type": "land",
+        "name": "고양",
+        "groupId": 5
+    },
+    {
+        "type": "land",
+        "name": "울산",
+        "groupId": 5
+    },
+    {
+        "type": "chance"
+    },
+    {
+        "type": "land",
+        "name": "수원",
+        "groupId": 6
+    },
+    {
+        "type": "land",
+        "name": "광주(광역시)",
+        "groupId": 6
+    },
+    {
+        "type": "land",
+        "name": "대전",
+        "groupId": 6
+    },
+    {
+        "type": "hospital"
+    },
+    {
+        "type": "land",
+        "name": "대구",
+        "groupId": 7
+    },
+    {
+        "type": "land",
+        "name": "인천",
+        "groupId": 7
+    },
+    {
+        "type": "chance"
+    },
+    {
+        "type": "land",
+        "name": "부산",
+        "groupId": 8
+    },
+    {
+        "type": "charity"
+    },
+    {
+        "type": "land",
+        "name": "서울",
+        "groupId": 8
+    }
+]
